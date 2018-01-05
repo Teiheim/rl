@@ -1,7 +1,6 @@
 import * as U from './util.js';
 import ROT from 'rot-js';
-
-
+import * as mode from './ui_mode.js';
 //
 
 export let Game = {
@@ -13,7 +12,13 @@ export let Game = {
         o: null
       }
     },
-
+    modes: {
+      startup: '',
+      play: '',
+      win:'',
+      lose:'',
+    },
+    curMode: '',
     init: function() {
       this._randomSeed = 5 + Math.floor(Math.random()*100000);
       //this._randomSeed = 76250;
@@ -25,6 +30,37 @@ export let Game = {
         width: this.display.main.w,
         height: this.display.main.h,
         spacing: this.display.SPACING});
+        this.setupModes();
+        this.switchMode('startup');
+        console.log("Maybe We have StartupMode working");
+
+    },
+    bindEvent: function(eventType){
+      window.addEventListener(eventType, (evt) => {
+        this.eventHandler(eventType, evt);
+      });
+    },
+    eventHandler: function (eventType, evt) {
+
+      if (this.curMode !== null && this._curMode != '') {
+        if (this.curMode.handleInput(eventType, evt)) {
+          this.render();
+          //Message.ageMessages();
+        }
+      }
+    },
+
+    setupModes: function() {
+      this.modes.startup = new mode.StartupMode(this);
+    },
+    switchMode: function(newModeName){
+      if(this.curMode){
+        this.curMode.exit();
+      }
+      this.curMode = this.modes[newModeName];
+      if(this.curMode) {
+        this.curMode.enter();
+      }
     },
     getDisplay: function (displayId) {
       if (this.display.hasOwnProperty(displayId)) {
@@ -38,9 +74,14 @@ export let Game = {
     },
 
     renderMain: function() {
-      let d = this.display.main.o;
-      for (let i = 0; i < 10; i++) {
-        d.drawText(5,i+5,"hello world");
-      }
+      console.log("renderMain");
+      //if (this.curMode.hadOwnProperty('render')){
+        this.curMode.render(this.display.main.o);
+        this.curMode.handleInput()
+      //}
+      // let d = this.display.main.o;
+      // for (let i = 0; i < 10; i++) {
+      //   d.drawText(5,i+5,"hello world");
+      // }
     }
 };
