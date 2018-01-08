@@ -4,7 +4,7 @@ class UIMode {
   constructor(thegame){
     console.log("Created "+this.constructor.name);
     this.game = thegame;
-    
+
 
   }
   enter(){
@@ -13,14 +13,18 @@ class UIMode {
   exit(){
     console.log("Exiting "+this.constructor.name);
   }
-  handleInput(){
+  handleInput(eventType, eventData){
     console.log("Input "+this.constructor.name);
     console.log(`Event Type is ${eventType}`)
     return false;
   }
+  clear(){
+
+  }
   render(display){
     console.log("Rendering "+this.constructor.name);
   }
+
 }
 
 export class StartupMode extends UIMode {
@@ -63,5 +67,42 @@ export class loseMode extends UIMode {
   render(display){
     console.log("Rendering Lose Mode");
     display.drawText(2,2,"Start Up Mode");
+  }
+}
+export class persistMode extends UIMode {
+  constructor() {
+
+  }
+  render(display) {
+    display.clear();
+    display.drawText(33,2,"N for a new game");
+    display.drawText(33,2,"S for save game");
+    display.drawText(33,2, "L to load previously saved game");
+  }
+  handleInput(inputType,inputData) {
+
+  }
+  haveSave() {
+    console.log('save game');
+    if(! this.localStorageAvailable()){
+      return false;
+    }
+    window.localStorage.setItem('weedstrikegame',this.game.toJson);
+  }
+  handleLoad() {
+    console.log('load game');
+    if (! this.localStorageAvailable()){
+      return false;
+    }
+    let restorationString = window.localStorage.getItem('weedstrikegame');
+    this.game.fromJson(restorationString);
+  }
+  localStorageAvailable(){
+    try{
+
+    }
+    catch(e) {
+
+    }
   }
 }

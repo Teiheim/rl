@@ -1,0 +1,19 @@
+.top-row {
+  display: inline-block;
+}
+.side {
+  width:20%;
+}
+.middle {
+  width:50%;
+}
+.main-container {
+  width:100%;
+  margin:0 auto;
+}
+div canvas {
+  width:100%;
+}
+#ws-bottom-display {
+  width:91%
+}

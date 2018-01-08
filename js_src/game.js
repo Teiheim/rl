@@ -1,6 +1,7 @@
 import * as U from './util.js';
 import ROT from 'rot-js';
 import * as mode from './ui_mode.js';
+import {Message} from './message.js'
 //
 
 export let Game = {
@@ -10,6 +11,21 @@ export let Game = {
         w: 80,
         h: 24,
         o: null
+      },
+      left: {
+        w: 24,
+        h: 20,
+        o: null
+      },
+      right: {
+        w: 24,
+        h: 20,
+        o: null
+      },
+      bottom: {
+        w: 130,
+        h: 6,
+        o: null
       }
     },
     modes: {
@@ -17,6 +33,7 @@ export let Game = {
       play: '',
       win:'',
       lose:'',
+      message:'',
     },
     curMode: '',
     init: function() {
@@ -34,8 +51,37 @@ export let Game = {
         this.switchMode('startup');
         console.log("Maybe We have StartupMode working");
 
+      this.display.left.o = new ROT.Display({
+        width: this.display.left.w,
+        height: this.display.left.h,
+        spacing: this.display.SPACING});
+        //  this.setupModes();
+        //  this.switchMode('startup');
+          console.log("Maybe We have StartupMode working");
+
+      this.display.right.o = new ROT.Display({
+        width: this.display.right.w,
+        height: this.display.right.h,
+        spacing: this.display.SPACING});
+      //  this.setupModes();
+      //  this.switchMode('startup');
+        console.log("Maybe We have StartupMode working");
+
+      this.display.bottom.o = new ROT.Display({
+        width: this.display.bottom.w,
+        height: this.display.bottom.h,
+        spacing: this.display.SPACING});
+      //  this.setupModes();
+      //  this.switchMode('startup');
+        console.log("Maybe We have StartupMode working");
+        var mes = new Message;
+        mes.send("bsod");
+        mes.render(this.display.bottom.o);
+
     },
+
     bindEvent: function(eventType){
+      console.log("bindEvent has opened")
       window.addEventListener(eventType, (evt) => {
         this.eventHandler(eventType, evt);
       });
@@ -83,5 +129,21 @@ export let Game = {
       // for (let i = 0; i < 10; i++) {
       //   d.drawText(5,i+5,"hello world");
       // }
+    },
+    renderMessage: function() {
+
+    },
+    setupNewGame: function() {
+      
     }
+    toJson: function() {
+      letJson = '';
+      json = JSON.stringify({rseed: this_randomSeed});
+      return json;
+
+    },
+    fromJson: function() {
+      let state = JSON.parse(json);
+      this._randonSeed = state.rseed;
+    },
 };
