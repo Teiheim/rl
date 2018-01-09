@@ -14872,10 +14872,466 @@ process.umask = function() { return 0; };
 
 /***/ }),
 /* 330 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-throw new Error("Module build failed: SyntaxError: Unexpected token, expected , (139:4)\n\n\u001b[0m \u001b[90m 137 | \u001b[39m      \n \u001b[90m 138 | \u001b[39m    }\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 139 | \u001b[39m    toJson\u001b[33m:\u001b[39m \u001b[36mfunction\u001b[39m() {\n \u001b[90m     | \u001b[39m    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 140 | \u001b[39m      letJson \u001b[33m=\u001b[39m \u001b[32m''\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 141 | \u001b[39m      json \u001b[33m=\u001b[39m \u001b[33mJSON\u001b[39m\u001b[33m.\u001b[39mstringify({rseed\u001b[33m:\u001b[39m this_randomSeed})\u001b[33m;\u001b[39m\n \u001b[90m 142 | \u001b[39m      \u001b[36mreturn\u001b[39m json\u001b[33m;\u001b[39m\u001b[0m\n");
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Game = undefined;
+
+var _util = __webpack_require__(331);
+
+var U = _interopRequireWildcard(_util);
+
+var _rotJs = __webpack_require__(91);
+
+var _rotJs2 = _interopRequireDefault(_rotJs);
+
+var _ui_mode = __webpack_require__(332);
+
+var mode = _interopRequireWildcard(_ui_mode);
+
+var _message = __webpack_require__(334);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+//
+
+var Game = exports.Game = {
+  display: {
+    SPACING: 1.1,
+    main: {
+      w: 80,
+      h: 24,
+      o: null
+    },
+    left: {
+      w: 24,
+      h: 20,
+      o: null
+    },
+    right: {
+      w: 24,
+      h: 20,
+      o: null
+    },
+    bottom: {
+      w: 130,
+      h: 6,
+      o: null
+    }
+  },
+  modes: {
+    startup: '',
+    play: '',
+    win: '',
+    lose: '',
+    message: ''
+  },
+  curMode: '',
+  init: function init() {
+    this._randomSeed = 5 + Math.floor(Math.random() * 100000);
+    //this._randomSeed = 76250;
+    console.log("using random seed " + this._randomSeed);
+    _rotJs2.default.RNG.setSeed(this._randomSeed);
+    U.what();
+
+    this.display.main.o = new _rotJs2.default.Display({
+      width: this.display.main.w,
+      height: this.display.main.h,
+      spacing: this.display.SPACING });
+    this.setupModes();
+    this.switchMode('startup');
+    console.log("Maybe We have StartupMode working");
+
+    this.display.left.o = new _rotJs2.default.Display({
+      width: this.display.left.w,
+      height: this.display.left.h,
+      spacing: this.display.SPACING });
+    //  this.setupModes();
+    //  this.switchMode('startup');
+    console.log("Maybe We have StartupMode working");
+
+    this.display.right.o = new _rotJs2.default.Display({
+      width: this.display.right.w,
+      height: this.display.right.h,
+      spacing: this.display.SPACING });
+    //  this.setupModes();
+    //  this.switchMode('startup');
+    console.log("Maybe We have StartupMode working");
+
+    this.display.bottom.o = new _rotJs2.default.Display({
+      width: this.display.bottom.w,
+      height: this.display.bottom.h,
+      spacing: this.display.SPACING });
+    //  this.setupModes();
+    //  this.switchMode('startup');
+    console.log("Maybe We have StartupMode working");
+    var mes = new _message.Message();
+    mes.send("bsod");
+    mes.render(this.display.bottom.o);
+  },
+
+  bindEvent: function bindEvent(eventType) {
+    var _this = this;
+
+    console.log("bindEvent has opened");
+    window.addEventListener(eventType, function (evt) {
+      _this.eventHandler(eventType, evt);
+    });
+  },
+  eventHandler: function eventHandler(eventType, evt) {
+
+    if (this.curMode !== null && this._curMode != '') {
+      if (this.curMode.handleInput(eventType, evt)) {
+        this.render();
+        //Message.ageMessages();
+      }
+    }
+  },
+
+  setupModes: function setupModes() {
+    this.modes.startup = new mode.StartupMode(this);
+  },
+  switchMode: function switchMode(newModeName) {
+    if (this.curMode) {
+      this.curMode.exit();
+    }
+    this.curMode = this.modes[newModeName];
+    if (this.curMode) {
+      this.curMode.enter();
+    }
+  },
+  getDisplay: function getDisplay(displayId) {
+    if (this.display.hasOwnProperty(displayId)) {
+      return this.display[displayId].o;
+    }
+    return null;
+  },
+
+  render: function render() {
+    this.renderMain();
+  },
+
+  renderMain: function renderMain() {
+    console.log("renderMain");
+    //if (this.curMode.hadOwnProperty('render')){
+    this.curMode.render(this.display.main.o);
+    this.curMode.handleInput();
+    //}
+    // let d = this.display.main.o;
+    // for (let i = 0; i < 10; i++) {
+    //   d.drawText(5,i+5,"hello world");
+    // }
+  },
+  renderMessage: function renderMessage() {},
+  renderMap: function renderMap() {
+    //this.mp.render(this.display.main.o)
+  },
+  setupNewGame: function setupNewGame() {},
+  toJson: function toJson() {
+    letJson = '';
+    json = JSON.stringify({ rseed: this_randomSeed });
+    return json;
+  },
+  fromJson: function fromJson() {
+    var state = JSON.parse(json);
+    this._randonSeed = state.rseed;
+  }
+};
+
+/***/ }),
+/* 331 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.utilAlert = utilAlert;
+exports.what = what;
+exports.Array2d = Array2d;
+function utilAlert() {
+  document.write("this is a util function<br/>");
+}
+function what() {
+  console.log("How do I do this???");
+}
+function Array2d(xdim, ydim) {
+  var arr2 = [];
+  for (var y = 1; y <= ydim; y++) {
+    arr2.push([]);
+    for (var x = 1; x <= xdim; x++) {
+      arr2[y].push(x);
+    }
+  }
+  return arr2;
+}
+
+/***/ }),
+/* 332 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.persistMode = exports.loseMode = exports.winMode = exports.playMode = exports.StartupMode = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _rotJs = __webpack_require__(91);
+
+var _rotJs2 = _interopRequireDefault(_rotJs);
+
+var _map = __webpack_require__(333);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var UIMode = function () {
+  function UIMode(thegame) {
+    _classCallCheck(this, UIMode);
+
+    console.log("Created " + this.constructor.name);
+    this.game = thegame;
+  }
+
+  _createClass(UIMode, [{
+    key: 'enter',
+    value: function enter() {
+      console.log("Entering " + this.constructor.name);
+    }
+  }, {
+    key: 'exit',
+    value: function exit() {
+      console.log("Exiting " + this.constructor.name);
+    }
+  }, {
+    key: 'handleInput',
+    value: function handleInput(eventType, eventData) {
+      console.log("Input " + this.constructor.name);
+      console.log('Event Type is ' + eventType);
+      return false;
+    }
+  }, {
+    key: 'clear',
+    value: function clear() {}
+  }, {
+    key: 'render',
+    value: function render(display) {
+      console.log("Rendering " + this.constructor.name);
+    }
+  }]);
+
+  return UIMode;
+}();
+
+var StartupMode = exports.StartupMode = function (_UIMode) {
+  _inherits(StartupMode, _UIMode);
+
+  function StartupMode() {
+    _classCallCheck(this, StartupMode);
+
+    return _possibleConstructorReturn(this, (StartupMode.__proto__ || Object.getPrototypeOf(StartupMode)).call(this));
+  }
+
+  _createClass(StartupMode, [{
+    key: 'render',
+    value: function render(display) {
+      console.log("Rendering StartupMode");
+      display.drawText(2, 2, "Start Up Mode");
+    }
+    //  handleInput(eventType, evt){
+    //    if (eventType == keyup) {
+
+    //    }
+    //  }
+
+  }]);
+
+  return StartupMode;
+}(UIMode);
+
+var playMode = exports.playMode = function (_UIMode2) {
+  _inherits(playMode, _UIMode2);
+
+  function playMode() {
+    _classCallCheck(this, playMode);
+
+    return _possibleConstructorReturn(this, (playMode.__proto__ || Object.getPrototypeOf(playMode)).call(this));
+  }
+
+  _createClass(playMode, [{
+    key: 'enter',
+    value: function enter() {
+      if (!this.map) {
+        this.map = new _map.Map(300, 160);
+      }
+    }
+  }, {
+    key: 'render',
+    value: function render(display) {
+      console.log("Rendering Play Mode");
+      display.drawText(2, 2, "Start Up Mode");
+    }
+  }]);
+
+  return playMode;
+}(UIMode);
+
+var winMode = exports.winMode = function (_UIMode3) {
+  _inherits(winMode, _UIMode3);
+
+  function winMode() {
+    _classCallCheck(this, winMode);
+
+    return _possibleConstructorReturn(this, (winMode.__proto__ || Object.getPrototypeOf(winMode)).call(this));
+  }
+
+  _createClass(winMode, [{
+    key: 'render',
+    value: function render(display) {
+      console.log("Rendering Win Mode");
+      display.drawText(2, 2, "Start Up Mode");
+    }
+  }]);
+
+  return winMode;
+}(UIMode);
+
+var loseMode = exports.loseMode = function (_UIMode4) {
+  _inherits(loseMode, _UIMode4);
+
+  function loseMode() {
+    _classCallCheck(this, loseMode);
+
+    return _possibleConstructorReturn(this, (loseMode.__proto__ || Object.getPrototypeOf(loseMode)).call(this));
+  }
+
+  _createClass(loseMode, [{
+    key: 'render',
+    value: function render(display) {
+      console.log("Rendering Lose Mode");
+      display.drawText(2, 2, "Start Up Mode");
+    }
+  }]);
+
+  return loseMode;
+}(UIMode);
+
+var persistMode = exports.persistMode = function (_UIMode5) {
+  _inherits(persistMode, _UIMode5);
+
+  function persistMode() {
+    _classCallCheck(this, persistMode);
+
+    return _possibleConstructorReturn(this, (persistMode.__proto__ || Object.getPrototypeOf(persistMode)).call(this));
+  }
+
+  _createClass(persistMode, [{
+    key: 'render',
+    value: function render(display) {
+      display.clear();
+      display.drawText(33, 2, "N for a new game");
+      display.drawText(33, 2, "S for save game");
+      display.drawText(33, 2, "L to load previously saved game");
+    }
+  }, {
+    key: 'handleInput',
+    value: function handleInput(inputType, inputData) {}
+  }, {
+    key: 'haveSave',
+    value: function haveSave() {
+      console.log('save game');
+      if (!this.localStorageAvailable()) {
+        return false;
+      }
+      window.localStorage.setItem('weedstrikegame', this.game.toJson);
+    }
+  }, {
+    key: 'handleLoad',
+    value: function handleLoad() {
+      console.log('load game');
+      if (!this.localStorageAvailable()) {
+        return false;
+      }
+      var restorationString = window.localStorage.getItem('weedstrikegame');
+      this.game.fromJson(restorationString);
+    }
+  }, {
+    key: 'localStorageAvailable',
+    value: function localStorageAvailable() {
+      try {} catch (e) {}
+    }
+  }]);
+
+  return persistMode;
+}(UIMode);
+
+/***/ }),
+/* 333 */
+/***/ (function(module, exports) {
+
+throw new Error("Module build failed: SyntaxError: Unexpected token (38:4)\n\n\u001b[0m \u001b[90m 36 | \u001b[39m}\n \u001b[90m 37 | \u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 38 | \u001b[39mlet \u001b[33mTILE_GRID_GENERATOR\u001b[39m \u001b[33m=\u001b[39m {\n \u001b[90m    | \u001b[39m    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 39 | \u001b[39m  \u001b[32m'basicCaves'\u001b[39m\u001b[33m:\u001b[39m \u001b[36mfunction\u001b[39m(xd\u001b[33m,\u001b[39myd)\u001b[33m;\u001b[39m\n \u001b[90m 40 | \u001b[39m  {\n \u001b[90m 41 | \u001b[39m    let tg \u001b[33m=\u001b[39m \u001b[33mArray2d\u001b[39m(xd\u001b[33m,\u001b[39myd\u001b[33m,\u001b[39m\u001b[33mTILES\u001b[39m\u001b[33m.\u001b[39m\u001b[33mNULLTILE\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m\n");
+
+/***/ }),
+/* 334 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Message = exports.Message = function () {
+  function Message() {
+    _classCallCheck(this, Message);
+
+    this.message = '';
+  }
+
+  _createClass(Message, [{
+    key: 'render',
+    value: function render(targetDisplay) {
+      targetDisplay.clear();
+      targetDisplay.drawText(1, 1, this.message);
+    }
+  }, {
+    key: 'send',
+    value: function send(msg) {
+      this.message = msg;
+    }
+  }, {
+    key: 'clear',
+    value: function clear() {
+      this.message = '';
+      return null;
+    }
+  }]);
+
+  return Message;
+}();
 
 /***/ })
 /******/ ]);

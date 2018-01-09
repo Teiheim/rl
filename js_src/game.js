@@ -133,9 +133,12 @@ export let Game = {
     renderMessage: function() {
 
     },
+    renderMap: function(){
+      //this.mp.render(this.display.main.o)
+    },
     setupNewGame: function() {
-      
-    }
+
+    },
     toJson: function() {
       letJson = '';
       json = JSON.stringify({rseed: this_randomSeed});

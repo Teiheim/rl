@@ -1,4 +1,5 @@
 import ROT from 'rot-js';
+import {Map} from './map.js'
 
 class UIMode {
   constructor(thegame){
@@ -46,6 +47,11 @@ export class playMode extends UIMode {
   constructor() {
     super();
   }
+  enter(){
+    if (!this.map) {
+      this.map = new Map(300,160);
+    }
+  }
   render(display){
     console.log("Rendering Play Mode");
     display.drawText(2,2,"Start Up Mode");
@@ -71,7 +77,7 @@ export class loseMode extends UIMode {
 }
 export class persistMode extends UIMode {
   constructor() {
-
+    super();
   }
   render(display) {
     display.clear();
