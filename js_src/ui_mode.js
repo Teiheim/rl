@@ -1,5 +1,5 @@
 import ROT from 'rot-js';
-import {Map} from './map.js'
+import {MapMaker} from './map.js'
 
 class UIMode {
   constructor(thegame){
@@ -49,7 +49,7 @@ export class playMode extends UIMode {
   }
   enter(){
     if (!this.map) {
-      this.map = new Map(300,160);
+      this.map = MapMaker(300,160);
     }
   }
   render(display){
@@ -105,10 +105,14 @@ export class persistMode extends UIMode {
   }
   localStorageAvailable(){
     try{
-
+      var x = '__storage_test__';
+      window.localStorage.setItem( x, x);
+      window.localStorage.removeItem(x);
+      return true;
     }
     catch(e) {
-
+      this.game.messageHandler.send('Sorry, no local data storage is available for this browser so game save/load is not possible');
+      return false;
     }
   }
 }

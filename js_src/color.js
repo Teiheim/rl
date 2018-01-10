@@ -1,6 +1,5 @@
 //Stores various default colors I guess
 
-export let Color = {
-  FG = "#FFF",
-  BG = "#000"
-}
+export let Color = {};
+  Color.FG = "#FFF",
+  Color.BG = "#000"

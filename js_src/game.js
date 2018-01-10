@@ -2,6 +2,7 @@ import * as U from './util.js';
 import ROT from 'rot-js';
 import * as mode from './ui_mode.js';
 import {Message} from './message.js'
+import {Map} from './map.js'
 //
 
 export let Game = {
@@ -77,6 +78,11 @@ export let Game = {
         var mes = new Message;
         mes.send("bsod");
         mes.render(this.display.bottom.o);
+        //var m = MapMaker(10,10);
+        this.display.main.o.getOptions();
+        var m = new Map(10,10);
+        m.render(this.display.main.o,0,0);
+
 
     },
 
