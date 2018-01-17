@@ -1,8 +1,8 @@
 //database for game objects
 
-export let DATASTORE = {
+export let DATASTORE = {};
 
-  export function initDatastore() {
+export function initDatastore() {
   DATASTORE = {
     GAME: {},
     MAPS: {}

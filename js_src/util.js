@@ -5,19 +5,11 @@ export function what() {
   console.log("How do I do this???");
 }
 export function Array2d(xdim,ydim, tile='#') {
-  console.log(`Enter Array2d`);
   var arr2 = [];
   for(var y=0;y<ydim;y++) {
-    console.log(`Enter Array Loop! This is Y: ${y}`);
-    arr2.push([1]);
-    console.log(`This is array2: ${arr2}`);
-    console.dir(arr2);
+    arr2.push([]);
     for(var x=0;x<xdim;x++) {
-      console.log(`Enter Array Loop! This is X: ${x}`);
-      console.dir(arr2);
       arr2[y].push(x);
-      console.log(`This is array2: ${arr2}`);
-      console.dir(arr2);
     }
   }
   return arr2;

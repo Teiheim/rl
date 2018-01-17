@@ -50,7 +50,7 @@ export let Game = {
         spacing: this.display.SPACING});
         this.setupModes();
         this.switchMode('startup');
-        console.log("Maybe We have StartupMode working");
+        //console.log("Maybe We have StartupMode working");
 
       this.display.left.o = new ROT.Display({
         width: this.display.left.w,
@@ -58,7 +58,7 @@ export let Game = {
         spacing: this.display.SPACING});
         //  this.setupModes();
         //  this.switchMode('startup');
-          console.log("Maybe We have StartupMode working");
+        //  console.log("Maybe We have StartupMode working");
 
       this.display.right.o = new ROT.Display({
         width: this.display.right.w,
@@ -66,7 +66,7 @@ export let Game = {
         spacing: this.display.SPACING});
       //  this.setupModes();
       //  this.switchMode('startup');
-        console.log("Maybe We have StartupMode working");
+        //console.log("Maybe We have StartupMode working");
 
       this.display.bottom.o = new ROT.Display({
         width: this.display.bottom.w,
@@ -74,14 +74,21 @@ export let Game = {
         spacing: this.display.SPACING});
       //  this.setupModes();
       //  this.switchMode('startup');
-        console.log("Maybe We have StartupMode working");
-        var mes = new Message;
-        mes.send("bsod");
-        mes.render(this.display.bottom.o);
+        //console.log("Maybe We have StartupMode working");
+        //var map = new ROT.Map.Cellular(50, 50, { connected: true });
+        //map.randomize(0.5);
+        //map.create();
+        //console.dir(map);
+        //console.log(`Leggo! ${Object.keys(map)}`);
+        //console.log(`Does this work? ${Object.values(map._map[5])}`);
+        //var mes = new Message;
+        //mes.send("bsod");
+        //mes.render(this.display.bottom.o);
         //var m = MapMaker(10,10);
-        this.display.main.o.getOptions();
+        //this.display.main.o.getOptions();
         var m = new Map(10,10);
         m.render(this.display.main.o,0,0);
+        this.display.main.o.draw(5,  4, "@");
 
 
     },
@@ -128,7 +135,7 @@ export let Game = {
     renderMain: function() {
       console.log("renderMain");
       //if (this.curMode.hadOwnProperty('render')){
-        this.curMode.render(this.display.main.o);
+        //this.curMode.render(this.display.main.o);
         this.curMode.handleInput()
       //}
       // let d = this.display.main.o;

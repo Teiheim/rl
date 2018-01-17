@@ -1,16 +1,23 @@
 //This is a tile class
 import {Symbol} from './display.js'
 export class Tile extends Symbol{
-  constructor(name,chr,fg,bg){
+  constructor(template){
     console.log("Symbol Object");
-    super(chr,fg,bg);
-    this.name = name;
+    super(template);
+    this.name = template.name;
     console.log("Symbol Object Created");
+  }
+  drawOn(display,dispX,dispY){
+    //display.draw(dispX, dispY, this._chr, this._fg, this._bg);
+    display.draw(dispX, dispY, '#');
+  }
+  isA() {
+    return this.name == name;
   }
 }
 
 export let TILES = {
-  WALL: new Tile('wall','#'),
-  FLOOR: new Tile('floor','.'),
-  NULLTILE: new Tile('nulltile','$')
+  WALL: new Tile({name:'wall',chr:'#'}),
+  FLOOR: new Tile({name:'floor',chr:'.'}),
+  NULLTILE: new Tile({name:'nulltile',chr:'$'})
 }

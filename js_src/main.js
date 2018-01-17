@@ -18,6 +18,6 @@ window.onload = function() {
   document.getElementById('ws-right-display').appendChild(Game.getDisplay('right').getContainer());
   document.getElementById('ws-bottom-display').appendChild(Game.getDisplay('bottom').getContainer());
 
-  Game.render();
+  //Game.render();
   Game.bindEvent('keyup');
 };
