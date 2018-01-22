@@ -5,7 +5,7 @@ export class Factory {
     this.knownTemplates;
   }
   learn(template) {
-    this.knownTemplates[template.templateName ? template.templateName : template.Name] = templaete;
+    this.knownTemplates[template.templateName ? template.templateName : template.Name] = template;
   }
   create(templateName) {
     let produc= new this.productClassk

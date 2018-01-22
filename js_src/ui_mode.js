@@ -7,7 +7,10 @@ import {Entities} from './entity.js'
 class UIMode {
   constructor(thegame){
     console.log("Created "+this.constructor.name);
+    console.dir(thegame);
     this.game = thegame;
+    this._STATE = {};
+    console.log(`Tell me if the Game Exists: ${thegame}`);
 
 
   }
@@ -17,29 +20,7 @@ class UIMode {
   exit(){
     console.log("Exiting "+this.constructor.name);
   }
-  handleInput(eventType, eventData){
-    console.log("Input "+this.constructor.name);
-    console.log(`Event Type is ${eventType}`);
-    console.log(`Event Data is ${eventData}`);
-    console.dir(eventData);
-    if (inputType == 'keyup') {
-      if (inputData.key == 'ArrowLeft') {
-        this.moveBy(-1,0);
-      }
-      else if (inputData.key == 'ArrowRight') {
-        this.moveBy(1,0);
-      }
-      else if (inputData.key == 'ArrowUp') {
-        this.moveBy(0,1);
-      }
-      else if (inputData.key == 'ArrowDown') {
-        this.moveBy(0,-1);
-      }
 
-
-    return false;
-  }    
-}
   //render() {
   //DATASTORE.MAPS[this._STATE.curMapId].renderOn(this.display,
   //this._STATE.cameraMapLoc.x,this._STATE.cameraMapLoc.y);
@@ -57,9 +38,6 @@ class UIMode {
 }
 
 export class StartupMode extends UIMode {
-  constructor() {
-    super();
-  }
   render(display){
     console.log("Rendering StartupMode");
     //display.drawText(2,2,"Start Up Mode");
@@ -74,8 +52,12 @@ export class StartupMode extends UIMode {
 
 }
 export class playMode extends UIMode {
-  constructor() {
-    super();
+  constructor(thegame) {
+    super(thegame);
+    this._STATE = {};
+    this._STATE.cameraMapLoc = {};
+    this._STATE.cameraMapLoc.x = 0;
+    this._STATE.cameraMapLoc.y = 0;
   }
   enter(){
     if (!this.map) {
@@ -95,39 +77,54 @@ export class playMode extends UIMode {
     let m = MapMaker({xdim:0})
     let a = new entity(ENTITIES.avatar);
   }
+  handleInput(inputType, inputData){
+    console.log("Input "+this.constructor.name);
+    console.log(`Event Type is ${inputType}`);
+    console.log(`Event Data is ${inputData}`);
+    console.dir(inputData);
+    if (inputType == 'keyup') {
+      if (inputData.key == 'ArrowLeft') {
+        this.moveBy(-1,0);
+      }
+      else if (inputData.key == 'ArrowRight') {
+        this.moveBy(1,0);
+      }
+      else if (inputData.key == 'ArrowUp') {
+        this.moveBy(0,1);
+      }
+      else if (inputData.key == 'ArrowDown') {
+        this.moveBy(0,-1);
+      }
+
+
+    return false;
+  }
+  }
   moveBy(x,y) {
-    let newX = this._STATE.cameraMapLoc.x + x;
-    let newY = this._STATE.cameraMapLoc.y + y;
-    if (newX < 0 || newX > DATASTORE.MAPS[this._STATE.curMapId].getXDim() - 1) { return; }
-    if (newY < 0 || newY > DATASTORE.MAPS[this._STATE.curMapId].getYDim() - 1) { return; }
-    this._STATE.cameraMapLoc.x = newX;
-    this._STATE.cameraMapLoc.y = newY;
-    this.render();
-   }
+  let newX = this._STATE.cameraMapLoc.x + x;
+  let newY = this._STATE.cameraMapLoc.y + y;
+  //if (newX < 0 || newX > DATASTORE.MAPS[this._STATE.curMapId].getXDim() - 1) { return; }
+  //if (newY < 0 || newY > DATASTORE.MAPS[this._STATE.curMapId].getYDim() - 1) { return; }
+  this._STATE.cameraMapLoc.x = newX;
+  this._STATE.cameraMapLoc.y = newY;
+  console.dir(this.game);
+  this.render(this.game.getDisplay().main.o,this._STATE.cameraMapLoc.x,this._STATE.cameraMapLoc.y);
+  }
 
 }
 export class winMode extends UIMode {
-  constructor() {
-    super();
-  }
   render(display){
     console.log("Rendering Win Mode");
     display.drawText(2,2,"Start Up Mode");
   }
 }
 export class loseMode extends UIMode {
-  constructor() {
-    super();
-  }
   render(display){
     console.log("Rendering Lose Mode");
     display.drawText(2,2,"Start Up Mode");
   }
 }
 export class persistMode extends UIMode {
-  constructor() {
-    super();
-  }
   render(display) {
     display.clear();
     display.drawText(33,2,"N for a new game");

@@ -8,8 +8,10 @@ export class Tile extends Symbol{
     console.log("Symbol Object Created");
   }
   drawOn(display,dispX,dispY){
-    //display.draw(dispX, dispY, this._chr, this._fg, this._bg);
-    display.draw(dispX, dispY, '#');
+
+    display.draw(dispX, dispY, this.chr, this.fg, this.bg);
+
+    //display.draw(dispX, dispY, '#');
   }
   isA() {
     return this.name == name;

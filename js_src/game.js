@@ -34,22 +34,23 @@ export let Game = {
       play: '',
       win:'',
       lose:'',
-      message:'',
+      persist:'',
     },
     curMode: '',
+    mode: {},
     init: function() {
       this._randomSeed = 5 + Math.floor(Math.random()*100000);
       //this._randomSeed = 76250;
       console.log("using random seed "+this._randomSeed);
       ROT.RNG.setSeed(this._randomSeed);
       U.what();
+      let gameMap = undefined;
 
       this.display.main.o = new ROT.Display({
         width: this.display.main.w,
         height: this.display.main.h,
         spacing: this.display.SPACING});
-        this.setupModes();
-        this.switchMode('startup');
+
         //console.log("Maybe We have StartupMode working");
 
       this.display.left.o = new ROT.Display({
@@ -86,10 +87,21 @@ export let Game = {
         //mes.render(this.display.bottom.o);
         //var m = MapMaker(10,10);
         //this.display.main.o.getOptions();
-        var m = new Map(10,10);
+        var m = new Map(30,30);
+        gameMap = m;
         m.render(this.display.main.o,0,0);
         this.display.main.o.draw(5,  4, "@");
-
+        this.setupModes();
+        //this.switchMode('startup');
+        this.switchMode('play');
+        //test, meant to be moved later
+        let menu = ["attack","defend","item","magic"]
+        var space = 0;
+        for (var i = 0;i<menu.length;i++) {
+        console.dir(menu[i]);
+        this.display.bottom.o.drawText(2,i,menu[i]);
+        space++;
+      }
 
     },
 
@@ -109,18 +121,45 @@ export let Game = {
       }
     },
 
+    getDisplay: function() {
+      return this.display;
+    },
+
     setupModes: function() {
       this.modes.startup = new mode.StartupMode(this);
+      this.modes.play = new mode.playMode(this);
+      this.modes.win = new mode.winMode(this);
+      this.modes.lose = new mode.loseMode(this);
+      this.modes.persist = new mode.persistMode(this);
+      //Creates all the different
     },
-    switchMode: function(newModeName){
+    /*switchMode: function(newModeName, m){
       if(this.curMode){
         this.curMode.exit();
       }
-      this.curMode = this.modes[newModeName];
+      this.curMode = newModeName;
+      this.mode = m;
       if(this.curMode) {
         this.curMode.enter();
       }
-    },
+    }, */
+    switchMode: function (newMode) {
+      if (typeof newMode == 'string' || newMode instanceof String) {
+      if (this.modes.hasOwnProperty(newMode)) {
+        newMode = this.modes[newMode];}
+      else {
+      return;
+    }
+  }
+      if (this.curMode !== null && this.curMode != '') {
+        this.curMode.exit();
+  }
+      this.curMode = newMode;
+      if (this.curMode !== null && this.curMode != '') {
+        this.curMode.enter();
+      }
+      this.render();
+},
     getDisplay: function (displayId) {
       if (this.display.hasOwnProperty(displayId)) {
         return this.display[displayId].o;
@@ -160,6 +199,6 @@ export let Game = {
     },
     fromJson: function() {
       let state = JSON.parse(json);
-      this._randonSeed = state.rseed;
+      this._randomSeed = state.rseed;
     },
 };

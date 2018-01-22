@@ -9430,10 +9430,13 @@ var Map = exports.Map = function () {
     this.state = {};
     this.state.id = (0, _util.uniqueId)();
     this.state.xdim = xdim || 1;
+
+    console.log('Xdim:' + xdim);
     this.state.ydim = ydim || 1;
     this.state.tileGrid = (0, _util.Array2d)(this.state.xdim, this.state.ydim, _tile.TILES.NULLTILE);
     this.state.mapPosToEntityId = {};
     this.state.entityIdtoMapPos = {};
+    //this.state.focus = {x:0,y=0};
 
     //this.id.uniqueId();
   }
@@ -9450,19 +9453,21 @@ var Map = exports.Map = function () {
       var ystart = camera_y - Math.trunc(o.height / 2);
       var yend = ystart + display.getOptions().height;
       this.basicCaves();
+      console.log('xstart:' + xstart + ',xend:' + xend + ',ystart:' + ystart + ',yend:' + yend);
 
       for (var xi = xstart; xi < xend; xi++) {
         for (var yi = ystart; yi < yend; yi++) {
-          console.log('This is tileGrid ' + this.state.tileGrid + ' on position (' + xi + ',' + yi + ')');
-          console.dir(this.state.tileGrid);
+          console.log('This is tileGrid on position (' + xi + ',' + yi + ')');
+          //console.dir(this.state.tileGrid);
           //console.dir(this.state.tileGrid[xi][yi]);
           //this.state.tileGrid[xi][yi].display.render(display,cx,cy);
           console.log("about to Draw On");
-          var tile = this.getTile(xi + xstart, yi + ystart);
+          var tile = this.getTile(xi, yi);
+          console.dir(tile);
           if (tile.isA(_tile.TILES.NULLTILE)) {
             tile = _tile.TILES.WALL;
           }
-          tile.drawOn(display, xi, yi);
+          tile.drawOn(display, cx, cy);
 
           //.draw()
 
@@ -9473,14 +9478,14 @@ var Map = exports.Map = function () {
         cy = 0;
       }
     }
-  }, {
-    key: 'getTile',
-    value: function getTile(x, y) {
-      if (x < 0 || x >= this._attr.xdim || y < 0 || y >= this._attr.ydim) {
-        return _tile.TILES.NULLTILE;
+
+    /*getTile(x,y) {
+      if ((x < 0) || (x >= this.attr.xdim) || (y<0) || (y >= this.attr.ydim)) {
+        return TILES.NULLTILE;
       }
-      return this.state.tileGrid[x][y] || _tile.TILES.NULLTILE;
-    }
+    return this.state.tileGrid[x][y] || TILES.NULLTILE;
+    } */
+
   }, {
     key: 'addEntityAt',
     value: function addEntityAt(ent, mapx, mapy) {
@@ -9517,13 +9522,15 @@ var Map = exports.Map = function () {
     key: 'basicCaves',
     value: function basicCaves() {
       console.log("We have entered the basic Caves loop");
-      var tg = (0, _util.Array2d)(this.state.xdim, this.state.ydim);
       var gen = new _rotJs2.default.Map.Cellular(this.state.xdim, this.state.ydim, { connected: true });
+      //let tg = Array2d(this.state.xdim,this.state.ydim);
+      var tg = (0, _util.Array2d)(gen._map[0].length, gen._map.length);
       gen.randomize(.49);
       gen.create();
       gen.create();
       gen.create();
       //gen._map = tg;
+      console.log('Below is the map');
       console.dir(gen._map);
       for (var x = 0; x < gen._map.length; x++) {
         console.log('we are on loop ' + x);
@@ -9531,8 +9538,11 @@ var Map = exports.Map = function () {
           console.log('we are on 2nd loop ' + y);
           if (gen._map[x][y] == 0) {
             console.dir(_tile.TILES.WALL);
+            console.log('This is x:' + x + ' and this is y:' + y + ' and here is tileGrid');
+            console.dir(this.state.tileGrid);
+            this.state.tileGrid[x][y] == gen._map[x][y];
             this.state.tileGrid[x][y] = _tile.TILES.WALL;
-          } else if (gen._map[x][y]) {
+          } else if (gen._map[x][y] == 1) {
             this.state.tileGrid[x][y] = _tile.TILES.FLOOR;
           } else {
             this.state.tileGrid[x][y] = _tile.TILES.NULLTILE;
@@ -9547,7 +9557,7 @@ var Map = exports.Map = function () {
   }, {
     key: 'getTile',
     value: function getTile(mapx, mapy) {
-      if (mapx < 0 || mapx > this.state.xdim - 1 || mapy < 0 || mapy > this.state.ydim - 1) ;{
+      if (mapx < 0 || mapx > this.state.xdim - 1 || mapy < 0 || mapy > this.state.ydim - 1) {
         return _tile.TILES.NULLTILE;
       }
       return this.state.tileGrid[mapx][mapy];
@@ -15157,6 +15167,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Game = undefined;
 
+var _Game;
+
 var _util = __webpack_require__(126);
 
 var U = _interopRequireWildcard(_util);
@@ -15177,9 +15189,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 
-var Game = exports.Game = {
+var Game = exports.Game = (_Game = {
   display: {
     SPACING: 1.1,
     main: {
@@ -15208,22 +15222,23 @@ var Game = exports.Game = {
     play: '',
     win: '',
     lose: '',
-    message: ''
+    persist: ''
   },
   curMode: '',
+  mode: {},
   init: function init() {
     this._randomSeed = 5 + Math.floor(Math.random() * 100000);
     //this._randomSeed = 76250;
     console.log("using random seed " + this._randomSeed);
     _rotJs2.default.RNG.setSeed(this._randomSeed);
     U.what();
+    var gameMap = undefined;
 
     this.display.main.o = new _rotJs2.default.Display({
       width: this.display.main.w,
       height: this.display.main.h,
       spacing: this.display.SPACING });
-    this.setupModes();
-    this.switchMode('startup');
+
     //console.log("Maybe We have StartupMode working");
 
     this.display.left.o = new _rotJs2.default.Display({
@@ -15260,9 +15275,21 @@ var Game = exports.Game = {
     //mes.render(this.display.bottom.o);
     //var m = MapMaker(10,10);
     //this.display.main.o.getOptions();
-    var m = new _map.Map(10, 10);
+    var m = new _map.Map(30, 30);
+    gameMap = m;
     m.render(this.display.main.o, 0, 0);
     this.display.main.o.draw(5, 4, "@");
+    this.setupModes();
+    //this.switchMode('startup');
+    this.switchMode('play');
+    //test, meant to be moved later
+    var menu = ["attack", "defend", "item", "magic"];
+    var space = 0;
+    for (var i = 0; i < menu.length; i++) {
+      console.dir(menu[i]);
+      this.display.bottom.o.drawText(2, i, menu[i]);
+      space++;
+    }
   },
 
   bindEvent: function bindEvent(eventType) {
@@ -15283,55 +15310,72 @@ var Game = exports.Game = {
     }
   },
 
+  getDisplay: function getDisplay() {
+    return this.display;
+  },
+
   setupModes: function setupModes() {
     this.modes.startup = new mode.StartupMode(this);
+    this.modes.play = new mode.playMode(this);
+    this.modes.win = new mode.winMode(this);
+    this.modes.lose = new mode.loseMode(this);
+    this.modes.persist = new mode.persistMode(this);
+    //Creates all the different
   },
-  switchMode: function switchMode(newModeName) {
-    if (this.curMode) {
+  /*switchMode: function(newModeName, m){
+    if(this.curMode){
       this.curMode.exit();
     }
-    this.curMode = this.modes[newModeName];
-    if (this.curMode) {
+    this.curMode = newModeName;
+    this.mode = m;
+    if(this.curMode) {
       this.curMode.enter();
     }
-  },
-  getDisplay: function getDisplay(displayId) {
-    if (this.display.hasOwnProperty(displayId)) {
-      return this.display[displayId].o;
+  }, */
+  switchMode: function switchMode(newMode) {
+    if (typeof newMode == 'string' || newMode instanceof String) {
+      if (this.modes.hasOwnProperty(newMode)) {
+        newMode = this.modes[newMode];
+      } else {
+        return;
+      }
     }
-    return null;
-  },
-
-  render: function render() {
-    this.renderMain();
-  },
-
-  renderMain: function renderMain() {
-    console.log("renderMain");
-    //if (this.curMode.hadOwnProperty('render')){
-    //this.curMode.render(this.display.main.o);
-    this.curMode.handleInput();
-    //}
-    // let d = this.display.main.o;
-    // for (let i = 0; i < 10; i++) {
-    //   d.drawText(5,i+5,"hello world");
-    // }
-  },
-  renderMessage: function renderMessage() {},
-  renderMap: function renderMap() {
-    //this.mp.render(this.display.main.o)
-  },
-  setupNewGame: function setupNewGame() {},
-  toJson: function toJson() {
-    letJson = '';
-    json = JSON.stringify({ rseed: this_randomSeed });
-    return json;
-  },
-  fromJson: function fromJson() {
-    var state = JSON.parse(json);
-    this._randonSeed = state.rseed;
+    if (this.curMode !== null && this.curMode != '') {
+      this.curMode.exit();
+    }
+    this.curMode = newMode;
+    if (this.curMode !== null && this.curMode != '') {
+      this.curMode.enter();
+    }
+    this.render();
   }
-};
+}, _defineProperty(_Game, 'getDisplay', function getDisplay(displayId) {
+  if (this.display.hasOwnProperty(displayId)) {
+    return this.display[displayId].o;
+  }
+  return null;
+}), _defineProperty(_Game, 'render', function render() {
+  this.renderMain();
+}), _defineProperty(_Game, 'renderMain', function renderMain() {
+  console.log("renderMain");
+  //if (this.curMode.hadOwnProperty('render')){
+  //this.curMode.render(this.display.main.o);
+  this.curMode.handleInput();
+  //}
+  // let d = this.display.main.o;
+  // for (let i = 0; i < 10; i++) {
+  //   d.drawText(5,i+5,"hello world");
+  // }
+}), _defineProperty(_Game, 'renderMessage', function renderMessage() {}), _defineProperty(_Game, 'renderMap', function renderMap() {
+  //this.mp.render(this.display.main.o)
+}), _defineProperty(_Game, 'setupNewGame', function setupNewGame() {}), _defineProperty(_Game, 'toJson', function toJson() {
+  letJson = '';
+  json = JSON.stringify({ rseed: this_randomSeed });
+  return json;
+}), _defineProperty(_Game, 'fromJson', function fromJson() {
+  var state = JSON.parse(json);
+  this._randomSeed = state.rseed;
+}), _Game);
 
 /***/ }),
 /* 333 */
@@ -15370,7 +15414,10 @@ var UIMode = function () {
     _classCallCheck(this, UIMode);
 
     console.log("Created " + this.constructor.name);
+    console.dir(thegame);
     this.game = thegame;
+    this._STATE = {};
+    console.log('Tell me if the Game Exists: ' + thegame);
   }
 
   _createClass(UIMode, [{
@@ -15383,27 +15430,7 @@ var UIMode = function () {
     value: function exit() {
       console.log("Exiting " + this.constructor.name);
     }
-  }, {
-    key: 'handleInput',
-    value: function handleInput(eventType, eventData) {
-      console.log("Input " + this.constructor.name);
-      console.log('Event Type is ' + eventType);
-      console.log('Event Data is ' + eventData);
-      console.dir(eventData);
-      if (inputType == 'keyup') {
-        if (inputData.key == 'ArrowLeft') {
-          this.moveBy(-1, 0);
-        } else if (inputData.key == 'ArrowRight') {
-          this.moveBy(1, 0);
-        } else if (inputData.key == 'ArrowUp') {
-          this.moveBy(0, 1);
-        } else if (inputData.key == 'ArrowDown') {
-          this.moveBy(0, -1);
-        }
 
-        return false;
-      }
-    }
     //render() {
     //DATASTORE.MAPS[this._STATE.curMapId].renderOn(this.display,
     //this._STATE.cameraMapLoc.x,this._STATE.cameraMapLoc.y);
@@ -15429,7 +15456,7 @@ var StartupMode = exports.StartupMode = function (_UIMode) {
   function StartupMode() {
     _classCallCheck(this, StartupMode);
 
-    return _possibleConstructorReturn(this, (StartupMode.__proto__ || Object.getPrototypeOf(StartupMode)).call(this));
+    return _possibleConstructorReturn(this, (StartupMode.__proto__ || Object.getPrototypeOf(StartupMode)).apply(this, arguments));
   }
 
   _createClass(StartupMode, [{
@@ -15454,10 +15481,16 @@ var StartupMode = exports.StartupMode = function (_UIMode) {
 var playMode = exports.playMode = function (_UIMode2) {
   _inherits(playMode, _UIMode2);
 
-  function playMode() {
+  function playMode(thegame) {
     _classCallCheck(this, playMode);
 
-    return _possibleConstructorReturn(this, (playMode.__proto__ || Object.getPrototypeOf(playMode)).call(this));
+    var _this2 = _possibleConstructorReturn(this, (playMode.__proto__ || Object.getPrototypeOf(playMode)).call(this, thegame));
+
+    _this2._STATE = {};
+    _this2._STATE.cameraMapLoc = {};
+    _this2._STATE.cameraMapLoc.x = 0;
+    _this2._STATE.cameraMapLoc.y = 0;
+    return _this2;
   }
 
   _createClass(playMode, [{
@@ -15487,19 +15520,37 @@ var playMode = exports.playMode = function (_UIMode2) {
       var a = new entity(ENTITIES.avatar);
     }
   }, {
+    key: 'handleInput',
+    value: function handleInput(inputType, inputData) {
+      console.log("Input " + this.constructor.name);
+      console.log('Event Type is ' + inputType);
+      console.log('Event Data is ' + inputData);
+      console.dir(inputData);
+      if (inputType == 'keyup') {
+        if (inputData.key == 'ArrowLeft') {
+          this.moveBy(-1, 0);
+        } else if (inputData.key == 'ArrowRight') {
+          this.moveBy(1, 0);
+        } else if (inputData.key == 'ArrowUp') {
+          this.moveBy(0, 1);
+        } else if (inputData.key == 'ArrowDown') {
+          this.moveBy(0, -1);
+        }
+
+        return false;
+      }
+    }
+  }, {
     key: 'moveBy',
     value: function moveBy(x, y) {
       var newX = this._STATE.cameraMapLoc.x + x;
       var newY = this._STATE.cameraMapLoc.y + y;
-      if (newX < 0 || newX > DATASTORE.MAPS[this._STATE.curMapId].getXDim() - 1) {
-        return;
-      }
-      if (newY < 0 || newY > DATASTORE.MAPS[this._STATE.curMapId].getYDim() - 1) {
-        return;
-      }
+      //if (newX < 0 || newX > DATASTORE.MAPS[this._STATE.curMapId].getXDim() - 1) { return; }
+      //if (newY < 0 || newY > DATASTORE.MAPS[this._STATE.curMapId].getYDim() - 1) { return; }
       this._STATE.cameraMapLoc.x = newX;
       this._STATE.cameraMapLoc.y = newY;
-      this.render();
+      console.dir(this.game);
+      this.render(this.game.getDisplay().main.o, this._STATE.cameraMapLoc.x, this._STATE.cameraMapLoc.y);
     }
   }]);
 
@@ -15512,7 +15563,7 @@ var winMode = exports.winMode = function (_UIMode3) {
   function winMode() {
     _classCallCheck(this, winMode);
 
-    return _possibleConstructorReturn(this, (winMode.__proto__ || Object.getPrototypeOf(winMode)).call(this));
+    return _possibleConstructorReturn(this, (winMode.__proto__ || Object.getPrototypeOf(winMode)).apply(this, arguments));
   }
 
   _createClass(winMode, [{
@@ -15532,7 +15583,7 @@ var loseMode = exports.loseMode = function (_UIMode4) {
   function loseMode() {
     _classCallCheck(this, loseMode);
 
-    return _possibleConstructorReturn(this, (loseMode.__proto__ || Object.getPrototypeOf(loseMode)).call(this));
+    return _possibleConstructorReturn(this, (loseMode.__proto__ || Object.getPrototypeOf(loseMode)).apply(this, arguments));
   }
 
   _createClass(loseMode, [{
@@ -15552,7 +15603,7 @@ var persistMode = exports.persistMode = function (_UIMode5) {
   function persistMode() {
     _classCallCheck(this, persistMode);
 
-    return _possibleConstructorReturn(this, (persistMode.__proto__ || Object.getPrototypeOf(persistMode)).call(this));
+    return _possibleConstructorReturn(this, (persistMode.__proto__ || Object.getPrototypeOf(persistMode)).apply(this, arguments));
   }
 
   _createClass(persistMode, [{
@@ -15644,8 +15695,10 @@ var Tile = exports.Tile = function (_Symbol2) {
   _createClass(Tile, [{
     key: "drawOn",
     value: function drawOn(display, dispX, dispY) {
-      //display.draw(dispX, dispY, this._chr, this._fg, this._bg);
-      display.draw(dispX, dispY, '#');
+
+      display.draw(dispX, dispY, this.chr, this.fg, this.bg);
+
+      //display.draw(dispX, dispY, '#');
     }
   }, {
     key: "isA",

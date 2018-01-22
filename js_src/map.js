@@ -8,10 +8,13 @@ export class Map{
     this.state = {};
     this.state.id = uniqueId();
     this.state.xdim = xdim || 1;
+
+    console.log(`Xdim:${xdim}`);
     this.state.ydim = ydim || 1;
     this.state.tileGrid = Array2d(this.state.xdim,this.state.ydim,TILES.NULLTILE);
     this.state.mapPosToEntityId = {};
     this.state.entityIdtoMapPos = {};
+    //this.state.focus = {x:0,y=0};
 
     //this.id.uniqueId();
   }
@@ -26,19 +29,21 @@ export class Map{
     let ystart = camera_y - Math.trunc(o.height/2);
     let yend = ystart + display.getOptions().height;
     this.basicCaves();
+    console.log(`xstart:${xstart},xend:${xend},ystart:${ystart},yend:${yend}`);
 
     for(let xi=xstart;xi<xend;xi++){
       for(let yi=ystart;yi<yend;yi++){
-        console.log(`This is tileGrid ${this.state.tileGrid} on position (${xi},${yi})`);
-        console.dir(this.state.tileGrid);
+        console.log(`This is tileGrid on position (${xi},${yi})`);
+        //console.dir(this.state.tileGrid);
         //console.dir(this.state.tileGrid[xi][yi]);
         //this.state.tileGrid[xi][yi].display.render(display,cx,cy);
         console.log("about to Draw On");
-        let tile = this.getTile(xi+xstart, yi+ystart);
+        let tile = this.getTile(xi, yi);
+        console.dir(tile);
         if (tile.isA(TILES.NULLTILE)) {
           tile = TILES.WALL;
         }
-        tile.drawOn(display,xi,yi)
+        tile.drawOn(display,cx,cy)
 
         //.draw()
 
@@ -51,12 +56,12 @@ export class Map{
 
   }
 
-  getTile(x,y) {
-    if ((x < 0) || (x >= this._attr.xdim) || (y<0) || (y >= this._attr.ydim)) {
+  /*getTile(x,y) {
+    if ((x < 0) || (x >= this.attr.xdim) || (y<0) || (y >= this.attr.ydim)) {
       return TILES.NULLTILE;
     }
   return this.state.tileGrid[x][y] || TILES.NULLTILE;
-  }
+} */
 
   addEntityAt(ent,mapx,mapy){
     ent.setX(mapx);
@@ -88,13 +93,15 @@ export class Map{
 
     basicCaves(){
       console.log("We have entered the basic Caves loop");
-      let tg = Array2d(this.state.xdim,this.state.ydim);
       let gen = new ROT.Map.Cellular(this.state.xdim,this.state.ydim, {connected:true});
+      //let tg = Array2d(this.state.xdim,this.state.ydim);
+      let tg = Array2d(gen._map[0].length,gen._map.length);
       gen.randomize(.49);
       gen.create();
       gen.create();
       gen.create();
       //gen._map = tg;
+      console.log('Below is the map');
       console.dir(gen._map);
       for(var x=0;x<gen._map.length;x++) {
         console.log(`we are on loop ${x}`);
@@ -102,9 +109,12 @@ export class Map{
         console.log(`we are on 2nd loop ${y}`)
           if(gen._map[x][y]==0){
             console.dir(TILES.WALL);
+            console.log(`This is x:${x} and this is y:${y} and here is tileGrid`);
+            console.dir(this.state.tileGrid);
+            this.state.tileGrid[x][y] == gen._map[x][y];
             this.state.tileGrid[x][y] = TILES.WALL;
           }
-          else if (gen._map[x][y]) {
+          else if (gen._map[x][y]==1) {
             this.state.tileGrid[x][y] = TILES.FLOOR;
           }
           else {
@@ -119,7 +129,7 @@ export class Map{
     }
 
 getTile(mapx,mapy){
-    if(mapx < 0 || mapx > this.state.xdim-1 || mapy < 0 || mapy > this.state.ydim-1); {
+    if(mapx < 0 || mapx > this.state.xdim-1 || mapy < 0 || mapy > this.state.ydim-1) {
       return TILES.NULLTILE;
     }
     return this.state.tileGrid[mapx][mapy];
