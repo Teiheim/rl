@@ -1,35 +1,44 @@
-class citizen {
-  this.name = "";
-  this.maxHP = 0;
-  this.curHP = 0;
-  this.mp = 0;
-  this.inventory = {};
-  this.magic = {};
-  this.abilities = {};
-  this.posx = 0;
-  this.posy = 0;
+import {Entity} from './entity.js'
+
+class Citizen extends Entity {
 
   constructor(template) {
+    super(template);
+    this.state = {};
+    this.state.name = "";
+    this.state.maxHP = 0;
+    this.state.curHP = 0;
+    this.state.mp = 0;
+    this.state.inventory = {};
+    this.state.magic = {};
+    this.state.abilities = {};
+    this.state.lvl=1;
+    this.state.posx = 0;
+    this.state.posy = 0;
+
     if(template.name){
-      this.name = template.name;
+      this.state.name = template.name;
     }
     if(template.maxHP){
-      this.maxHP = template.maxHP;
+      this.state.maxHP = template.maxHP;
     }
     if(template.curHP){
-      this.curHP = template.curHP
+      this.state.curHP = template.curHP
     }
     if(template.mp){
-      this.mp = template.mp;
+      this.state.mp = template.mp;
     }
     if(template.inventory){
-      this.inventory = template.inventory;
+      this.state.inventory = template.inventory;
     }
     if(template.magic){
-      this.magic = template.magic;
+      this.state.magic = template.magic;
     }
     if(template.abilities){
-      this.abilities = template.abilities;
+      this.state.abilities = template.abilities;
+    }
+    if(template.lvl){
+      this.state.lvl = template.lvl;
     }
   }
   toJson() {
@@ -37,36 +46,69 @@ class citizen {
   }
   fromJson(save) {
     return JSON.parse(this);
-    return new citizen(save);
+    return new Citizen(save);
   }
 }
 
-class fighter extends citzen{
-  this.moves = 1;
-  this.strength = 1;
-  this.defense = 1;
-  this.weapon = '';
+class Fighter extends Citizen{
 
   constructor(template) {
-    super();
+    super(template);
+    this.state.moves = 10;
+    this.state.strength = 1;
+    this.state.defense = 1;
+    this.state.weapon = {};
+
     if(template.moves){
-      this.moves = template.moves;
+      this.state.moves = template.moves;
     }
     if(template.strength){
-      this.strength = template.strength;
+      this.state.strength = template.strength;
     if(template.defense) {
-      this.defense = template.defense;
+      this.state.defense = template.defense;
     }
     }
   }
 }
-class player extends fighter{
+export class Player extends Fighter{
   constructor(template){
-    super();
+    super(template);
+    this.state.actions = {
+      MOVE: /*function(map,moves,x,y,d){
+        if(moves>0 && x>=0 && y>=0){
+          if(map.isPositionOpen(x,y)){
+            var tile = map.state.tileGrid[x][y];
+            tile.colorChange("#3b45a4",x,y,d);
+            console.log(`This is console actions:${this.state}`);
+            console.log(this);
+            this.MOVE(map,moves-1,x+1,y,d);
+            this.MOVE(map,moves-1,x,y+1,d);
+            this.MOVE(map,moves-1,x-1,y,d);
+            this.MOVE(map,moves-1,x,y-1,d);
+            return;
+          }
+          else{
+            return;
+          }
+
+        }
+      }*/"",
+      ATTACK: "",
+      DEFEND: "",
+      MAGIC: "",
+      ITEM: "",
+
+    };
+  }
+  giveX(){
+    return this.state.posx;
+  }
+  giveY(){
+    return this.state.posy;
   }
 }
-class monster extends fighter{
+export class Monster extends Fighter{
   constructor(template){
-    super();
+    super(template);
   }
 }

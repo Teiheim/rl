@@ -1,3 +1,3 @@
-# Weed Strike Roguelike
+# Castle
 
-Weed Strike is a simple roguelike game for teaching/demonstration purposes.
+You are Tashina a young woman who has left the town she calls home in order to find her parents and travel the world. After learning much about herself and about the world, she has decided to return to her town. When she arrives though, the entire town is deserted. The buildings are left in pristine condition. Wondering what has happened to all of her loved ones, Tashina travels to Castle, who's gates remain unguarded and open. Curious Tashina has broken in many times before and is well acquainted with the layout of the castle enters the castle looking for clues for what has happened to her town.

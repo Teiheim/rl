@@ -12,6 +12,7 @@ export class Symbol {
 
   }
   render(display,x,y){
+    console.log("DISPLAY THE AVATAR")
     display.draw(x,y,this.chr,this.fg,this.bg);
   }
 }

@@ -3,7 +3,7 @@ import {uniqueId} from './util.js';
 import {Symbol} from './display.js';
 import {DATASTORE} from './datastore.js';
 
-class Entity extends Symbol {
+export class Entity extends Symbol {
   constructor(template) {
     super(template);
     this.name = template.name;

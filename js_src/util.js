@@ -34,3 +34,10 @@ export function uniqueId(){
     }
     return a;
   }
+export function verbose(b,a="") {
+  if(a == ""){
+  console.log(`This is ${b}`);
+}
+  console.log('This is '+a);
+  console.dir(b);
+}

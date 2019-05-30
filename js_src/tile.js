@@ -16,6 +16,27 @@ export class Tile extends Symbol{
   isA() {
     return this.name == name;
   }
+  isAWall(){
+    console.log(`The Character in this space is ${this.chr}`);
+    if(this.chr != '.'){
+      return false;
+    }
+    else{
+      return true;
+    }
+  }
+  colorChange(color,x,y,display){
+    this.bg = color;
+    this.drawOn(display,x,y);
+  }
+  switchChar(){
+    if(this.chr=='#'){
+      this.chr = '.';
+    }
+    else if (this.chr=='.') {
+      this.chr = '#';
+    }
+  }
 }
 
 export let TILES = {

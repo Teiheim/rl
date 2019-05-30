@@ -45,11 +45,39 @@ export let Game = {
       ROT.RNG.setSeed(this._randomSeed);
       U.what();
       let gameMap = undefined;
-
+      var tileSet = document.createElement("img");
+      tileSet.src = "./img/tile.png";
+      var options = {
+        layout: "tile",
+        bg: "transparent",
+        tileWidth: 16,
+        tileHeight: 16,
+        tileSet: tileSet,
+        //tileMap: {
+        //  "@": [64, 15],
+        //  "#": [1, 24],
+        //  ".": [2, 45],
+        //  "$": [0, 112]
+        //},
+        width: 1,
+        height: 1
+}
       this.display.main.o = new ROT.Display({
         width: this.display.main.w,
         height: this.display.main.h,
-        spacing: this.display.SPACING});
+        spacing: this.display.SPACING,
+        /*layout: "tile",
+        bg: "transparent",
+        tileWidth: 16,
+        tileHeight: 16,
+        tileSet: tileSet,
+        tileMap: {
+          "@": [64, 15],
+          "#": [1, 24],
+          ".": [2, 45],
+          "$": [0, 112]
+        },*/
+          });
 
         //console.log("Maybe We have StartupMode working");
 
@@ -87,21 +115,21 @@ export let Game = {
         //mes.render(this.display.bottom.o);
         //var m = MapMaker(10,10);
         //this.display.main.o.getOptions();
-        var m = new Map(30,30);
-        gameMap = m;
-        m.render(this.display.main.o,0,0);
-        this.display.main.o.draw(5,  4, "@");
+        //var m = new Map(60,60);
+        //gameMap = m;
+        //m.render(this.display.main.o,0,0);
+        //this.display.main.o.draw(5,  4, "@");
         this.setupModes();
         //this.switchMode('startup');
         this.switchMode('play');
         //test, meant to be moved later
-        let menu = ["attack","defend","item","magic"]
+        //let menu = ["attack","defend","item","magic"]
         var space = 0;
-        for (var i = 0;i<menu.length;i++) {
-        console.dir(menu[i]);
-        this.display.bottom.o.drawText(2,i,menu[i]);
-        space++;
-      }
+        //for (var i = 0;i<menu.length;i++) {
+        //console.dir(menu[i]);
+        //this.display.bottom.o.drawText(2,i,menu[i]);
+        //space++;
+      //}
 
     },
 
@@ -121,9 +149,9 @@ export let Game = {
       }
     },
 
-    getDisplay: function() {
+  /*  getDisplay: function() {
       return this.display;
-    },
+    },*/
 
     setupModes: function() {
       this.modes.startup = new mode.StartupMode(this);
@@ -161,6 +189,7 @@ export let Game = {
       this.render();
 },
     getDisplay: function (displayId) {
+      console.log(`This is displayID: ${displayId}`);
       if (this.display.hasOwnProperty(displayId)) {
         return this.display[displayId].o;
       }
